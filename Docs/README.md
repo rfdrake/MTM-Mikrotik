@@ -4,13 +4,11 @@
 
 ```
 composer require mtm-mikrotik;
-
 ```
 
-I assume your device has been served vmlinux from a tftp server and is ready for net install
+I assume your device has been served vmlinux from a tftp server and is ready for net install.
 one way to do this is using ISC DHCP with a bootp config to serve up the vmlinux image.
-if you just want to test, use net install for this and once the device shows as "ready"
-then call this method:
+if you just want to test, use the regular net install for this and once the device shows as "ready" you can proceed
 
 #### ready the tool object:
 
@@ -54,7 +52,6 @@ $scriptPath	= "/path/to/my/script/resetToDefaults.rsc";
 	
 //execute the net install
 $toolObj->flashByMac($macAddr, $fwPath, $scriptPath);
-
 ```
 
 done, unit will reboot and trigger the default config script if needed
