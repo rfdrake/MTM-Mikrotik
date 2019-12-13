@@ -92,7 +92,7 @@ class Discovery
 	}
 	public function getDeviceByMacAddress($macAddr, $timeoutMs=10000)
 	{
-		$macAddr	= strtoupper(trim($macAddr));
+		$macAddr	= preg_replace("/[^a-fA-F0-9]+/", "", strtoupper(trim($macAddr)));
 		$devObjs	= $this->getDeviceList($timeoutMs);
 		foreach ($devObjs as $devObj) {
 			if ($devObj->mac == $macAddr) {
