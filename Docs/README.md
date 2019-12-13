@@ -1,5 +1,12 @@
 ### NetInstall:
 
+#### install:
+
+```
+composer require mtm-mikrotik;
+
+```
+
 I assume your device has been served vmlinux from a tftp server and is ready for net install
 one way to do this is using ISC DHCP with a bootp config to serve up the vmlinux image.
 if you just want to test, use net install for this and once the device shows as "ready"
