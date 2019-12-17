@@ -7,7 +7,7 @@ composer require mtm-mikrotik;
 ```
 
 I assume your device has been served vmlinux from a tftp server and is ready for net install.
-one way to do this is using ISC DHCP with a bootp config to serve up the vmlinux image.
+one way to do this is using <a href="./Docs/Examples/ISC-DHCP/dhcpd.conf">ISC DHCP</a> with a bootp config to serve up the vmlinux image.
 if you just want to test, use the regular net install for this and once the device shows as "ready" you can proceed
 
 #### ready the tool object:
@@ -31,7 +31,7 @@ $toolObj->setTxConfig($ip, $mac);
 
 #### Identify the routerboard you want to NetInstall:
 
-if you dont know the mac, or want to validate the device is ready for netInstall use otherwise skip this step:
+if you dont know the mac, or want to validate the device is ready for netInstall use this, otherwise skip this step:
 
 ```
 $devObjs	= $toolObj->getDeviceList()
