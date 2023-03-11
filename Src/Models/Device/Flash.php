@@ -5,9 +5,7 @@ namespace MTM\Mikrotik\Models\Device;
 abstract class Flash extends Alpha
 {
 	protected $_txMaxBytes=1024;
-	
-	//delay may have to be adjusted based on the type of device and the speed of its flash
-	protected $_txDelay=250; //delay between packets in micro sec, this can be optimized. Major reason for slow execution
+	protected $_txDelay=7500; //delay between packets in micro sec, this can be optimized. Major reason for slow execution
 	
 	public function flash($fwObj, $rscPath=null)
 	{
@@ -30,6 +28,9 @@ abstract class Flash extends Alpha
 			throw new \Exception("Firmware file does not match the architecture of the device");
 		}
 
+		//delay has to be adjusted based on the type of device and the speed of its flash
+		$this->_txDelay		= $this->getFlashTxDelay();
+		
 		$this->flashOffer();
 		$this->flashFormat();
 		$this->flashFileHeader($fwFile, $fwFile->getName());
@@ -41,6 +42,16 @@ abstract class Flash extends Alpha
 		$this->flashComplete();
 		
 		return $this;
+	}
+	public function getFlashTxDelay()
+	{
+		//may have to be adjusted for remote vs. local
+		if ($this->getModel() === "C52iG-5HaxD2HaxD") {
+			return 250;
+		} elseif ($this->getModel() === "RBD52G-5HacD2HnD") {
+			return 2500;
+		}
+		return 7500;
 	}
 	protected function flashOffer()
 	{
@@ -69,7 +80,7 @@ abstract class Flash extends Alpha
 					throw new \Exception("Invalid Flash Offer ACK response");
 				}
 				$this->flashWrite("", 2, 1);
-				$rObj	= $this->flashWait(2, 2);
+				$rObj	= $this->flashWait(2, 2, 25000);
 				
 			} elseif ($rObj->srcPos === 4 && $rObj->dstPos === 3) {
 				
