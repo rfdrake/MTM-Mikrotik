@@ -80,7 +80,7 @@ abstract class Flash extends Alpha
 					throw new \Exception("Invalid Flash Offer ACK response");
 				}
 				$this->flashWrite("", 2, 1);
-				$rObj	= $this->flashWait(2, 2, 25000);
+				$rObj	= $this->flashWait(2, 2, 30000);
 				
 			} elseif ($rObj->srcPos === 4 && $rObj->dstPos === 3) {
 				
