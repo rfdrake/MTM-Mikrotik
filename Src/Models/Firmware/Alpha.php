@@ -32,6 +32,8 @@ abstract class Alpha extends \MTM\Utilities\Tools\Validations\V1
 	{
 		if ($fileObj instanceof \MTM\FS\Models\File === false) {
 			throw new \Exception("Invalid input");
+		} elseif ($fileObj->getExists() === false) {
+			throw new \Exception("Firmware file does not exist");
 		}
 		$this->_fileObj		= $fileObj;
 		return $this;

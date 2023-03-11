@@ -8,7 +8,12 @@ abstract class Process extends Initialize
 	protected $_txSock=null;
 	protected $_rxMaxBytes=1024;
 	
-	protected function read($timeoutMs=10000, $throw=false)
+	public function write($data)
+	{
+		socket_sendto($this->getTxSock(), $data, strlen($data), 0, "255.255.255.255", 5000);
+		return $this;
+	}
+	public function read($timeoutMs=10000, $throw=false)
 	{
 		$this->isUsign32Int($timeoutMs, true);
 		$this->isBoolean($throw, true);
@@ -34,7 +39,7 @@ abstract class Process extends Initialize
 					
 					$rObj				= new \stdClass();
 					$rObj->srcMac		= strtolower(substr($rData, 0, 12));
-					$rObj->dstMac		= strtolower(substr($rData, 0, 12));
+					$rObj->dstMac		= strtolower(substr($rData, 12, 12));
 					
 					//$val				= substr($rData, 24, 4)
 					//is always 0000, dunno the use
@@ -64,17 +69,6 @@ abstract class Process extends Initialize
 		}
 		return $rObj;
 	}
-	protected function getRxSock()
-	{
-		if ($this->_rxSock === null) {
-			$sockObj = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
-			socket_set_option($sockObj, SOL_SOCKET, SO_REUSEADDR, true);
-			socket_bind($sockObj, "0.0.0.0", 5000);
-			socket_set_nonblock($sockObj);
-			$this->_rxSock	= $sockObj;
-		}
-		return $this->_rxSock;
-	}
 	protected function getTxSock()
 	{
 		if ($this->_txSock === null) {
@@ -91,5 +85,16 @@ abstract class Process extends Initialize
 			$this->_txSock	= $sockObj;
 		}
 		return $this->_txSock;
+	}
+	protected function getRxSock()
+	{
+		if ($this->_rxSock === null) {
+			$sockObj = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
+			socket_set_option($sockObj, SOL_SOCKET, SO_REUSEADDR, true);
+			socket_bind($sockObj, "0.0.0.0", 5000);
+			socket_set_nonblock($sockObj);
+			$this->_rxSock	= $sockObj;
+		}
+		return $this->_rxSock;
 	}
 }

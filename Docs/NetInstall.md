@@ -3,13 +3,75 @@ I assume your device has been served vmlinux from a tftp server and is ready for
 one way to do this is using <a href="./Examples/ISC-DHCP/dhcpd.conf">ISC DHCP</a> with a bootp config to serve up the vmlinux image.
 if you just want to test, use the regular net install for this and once the device shows as "ready" you can proceed
 
+### Version 1:
+
+#### ready the tool object:
+
+```
+
+require_once "/path/to/mtm-mikrotik/Enable.php";
+$toolObj	= \MTM\Mikrotik\Facts::getTools()->getNetInstall(2);
+
+```
+
+#### set environment:
+
+Set the interface name, ip and mac from the SERVER interface you wish to use
+
+```
+$toolObj	= \MTM\Mikrotik\Facts::getTools()->getNetInstall(2);
+
+//auto populate, good if you only have one interface
+$toolObj->autoPopulateInterface();
+
+//else manual
+$name	= "eth0";
+$ip		= "10.155.9.46";
+$mac	= "000c2917c6fb";
+$toolObj->setInterface($name, $mac, $ip);
+
+```
+
+#### Identify the routerboard you want to NetInstall:
+
+```
+
+$devObjs	= $toolObj->discover();
+print_r($devObjs);
+$devObj		= reset($devObjs);
+
+```
+
+#### Flash a device
+
+```
+
+//ready the firmware factory
+$fwFact	= \MTM\Mikrotik\Facts::getFirmwares();
+$fwFact->setBasePath("/path/to/folder/with/RouterOS/npk/files");
+
+//OPTIONAL: path to the script that should be set as the default config
+$scriptPath	= "/path/to/my/script/resetToDefaults.rsc";
+
+//get the firmware you want to flash
+$fwObj		= $fwFact->getByDevice($devObj);
+$devObj->flash($fwObj, $scriptPath);
+
+```
+
+done, unit will reboot and trigger the default config script if needed
+
+
+### Version 1:
+
+
 #### ready the tool object:
 
 ```
 
 require_once "/path/to/mtm-mikrotik/Enable.php";
 
-$toolObj	= \MTM\Mikrotik\Factories::getTools()->getNetInstall();
+$toolObj	= \MTM\Mikrotik\Facts::getTools()->getNetInstall();
 
 ```
 
