@@ -3,7 +3,7 @@ I assume your device has been served vmlinux from a tftp server and is ready for
 one way to do this is using <a href="./Examples/ISC-DHCP/dhcpd.conf">ISC DHCP</a> with a bootp config to serve up the vmlinux image.
 if you just want to test, use the regular net install for this and once the device shows as "ready" you can proceed
 
-### Version 1:
+### Version 2:
 
 #### ready the tool object:
 
