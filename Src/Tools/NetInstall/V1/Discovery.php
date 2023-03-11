@@ -1,6 +1,6 @@
 <?php
-//© 2019 Martin Peter Madsen
-namespace MTM\Mikrotik\Tools\NetInstall;
+//ï¿½ 2019 Martin Peter Madsen
+namespace MTM\Mikrotik\Tools\NetInstall\V1;
 
 class Discovery
 {	
@@ -9,7 +9,10 @@ class Discovery
 		$timeout	= $timeoutMs;
 		$tObjs		= array();
 		$rObjs		= array();
-		$sTime  	= \MTM\Utilities\Factories::getTime()->getMicroEpoch();
+		$timeFact	= \MTM\Utilities\Factories::getTime();
+		$cTime  	= $timeFact->getMicroEpoch();
+		$tTime		= $cTime + ($timeoutMs / 1000);
+		
 		while (true) {
 			
 			try {
@@ -69,14 +72,6 @@ class Discovery
 					//we got another type of message
 				}
 
-				//set a new timeout value, read returns any frame it receives
-				$cTime  	= \MTM\Utilities\Factories::getTime()->getMicroEpoch();
-				$timeout	= $timeoutMs - intval(($cTime - $sTime) * 1000);
-				if ($timeout < 1) {
-					//we have run out of time
-					break;
-				}
-				
 			} catch (\Exception $e) {
 				switch ($e->getCode()) {
 					case 13465:
@@ -85,6 +80,13 @@ class Discovery
 					default:
 						throw $e;
 				}
+			}
+			
+			//set a new timeout value, read returns any frame it receives
+			$cTime  	= $timeFact->getMicroEpoch();
+			if ($cTime > $tTime) {
+				//we have run out of time
+				break;
 			}
 		}
 		

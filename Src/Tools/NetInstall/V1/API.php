@@ -1,6 +1,6 @@
 <?php
-//© 2019 Martin Peter Madsen
-namespace MTM\Mikrotik\Tools\NetInstall;
+//ï¿½ 2019 Martin Peter Madsen
+namespace MTM\Mikrotik\Tools\NetInstall\V1;
 
 class API extends Flash
 {

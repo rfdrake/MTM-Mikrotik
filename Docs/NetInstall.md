@@ -6,8 +6,11 @@ if you just want to test, use the regular net install for this and once the devi
 #### ready the tool object:
 
 ```
+
 require_once "/path/to/mtm-mikrotik/Enable.php";
+
 $toolObj	= \MTM\Mikrotik\Factories::getTools()->getNetInstall();
+
 ```
 
 #### set environment:
@@ -17,9 +20,11 @@ these are the values from the server the PHP script is running on
 remember the server must have L2 access to the routerboard, L2 VPN access if fine
 
 ```
+
 $ip		= "10.155.9.46";
 $mac	= "00:0c:29:17:c6:fb";
 $toolObj->setTxConfig($ip, $mac);
+
 ```
 
 #### Identify the routerboard you want to NetInstall:
@@ -27,7 +32,7 @@ $toolObj->setTxConfig($ip, $mac);
 if you dont know the mac, or want to validate the device is ready for netInstall use this, otherwise skip this step:
 
 ```
-$devObjs	= $toolObj->getDeviceList()
+$devObjs	= $toolObj->getDeviceList();
 print_r($devObjs);
 ```
 
