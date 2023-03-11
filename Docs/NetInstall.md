@@ -46,14 +46,16 @@ $devObj		= reset($devObjs);
 
 ```
 
-//ready the firmware factory
-$fwFact	= \MTM\Mikrotik\Facts::getFirmwares();
-$fwFact->setBasePath("/path/to/folder/with/RouterOS/npk/files");
+//ready the firmware factory. 
+//The $npkPath should hold the npk files downloaded from mikrotik with the default names
+$npkPath	= "/path/to/folder/with/RouterOS/npk/files/";
+$fwFact		= \MTM\Mikrotik\Facts::getFirmwares();
+$fwFact->setBasePath($npkPath);
 
 //OPTIONAL: path to the script that should be set as the default config
 $scriptPath	= "/path/to/my/script/resetToDefaults.rsc";
 
-//get the firmware you want to flash
+//get the firmware to flash, by default the highest version number is used
 $fwObj		= $fwFact->getByDevice($devObj);
 $devObj->flash($fwObj, $scriptPath);
 
