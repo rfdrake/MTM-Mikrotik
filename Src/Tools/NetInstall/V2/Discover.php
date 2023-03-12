@@ -44,8 +44,11 @@ abstract class Discover extends Alpha
 								if (array_key_exists(6, $rows) === true) {
 									$devObj->setCurrentVersion(trim($rows[6]));
 								}
-								$devObjs[$licId]	= $devObj;
-								
+								if ($devObj->getArchitecture() !== null && $devObj->getModel() !== null) {
+									//must have these
+									$devObjs[$licId]	= $devObj;
+								}
+
 							} else {
 								
 								//there could be multiple ports plugged in

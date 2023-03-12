@@ -80,7 +80,7 @@ abstract class Flash extends Alpha
 					throw new \Exception("Invalid Flash Offer ACK response");
 				}
 				$this->flashWrite("", 2, 1);
-				$rObj	= $this->flashWait(2, 2, 30000);
+				$rObj	= $this->flashWait(2, 2, 120000); //can take a long time to format
 				
 			} elseif ($rObj->srcPos === 4 && $rObj->dstPos === 3) {
 				
@@ -185,9 +185,17 @@ abstract class Flash extends Alpha
 			
 			$cmdHex		= $this->arrayToHex(array("F", "I", "L", "E", 10));
 			$this->flashWrite($cmdHex, ($rObj->srcPos + 1), $rObj->dstPos);
-			$rObj		= $this->flashRead();
 			
+			//we should receive 3x WTERM messages
 			$cmdHex		= $this->arrayToHex(array("W", "T", "R", "M"));
+			for ($x=0; $x < 3; $x++) {
+				$rObj	= $this->flashRead();
+				if ($cmdHex != bin2hex($rObj->data)) {
+					throw new \Exception("Invalid Flash complete ACK response");
+				}
+			}
+			
+			$cmdHex		= $this->arrayToHex(array_merge(array("T", "E", "R", "M", 10), str_split("Installation successful", 1), array(10)));
 			$this->flashWrite($cmdHex, ($rObj->srcPos + 1), $rObj->dstPos);
 
 		} catch (\Exception $e) {
