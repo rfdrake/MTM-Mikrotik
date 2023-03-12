@@ -189,9 +189,13 @@ abstract class Flash extends Alpha
 			//we should receive 3x WTERM messages
 			$cmdHex		= $this->arrayToHex(array("W", "T", "R", "M"));
 			for ($x=0; $x < 3; $x++) {
-				$rObj	= $this->flashRead();
-				if ($cmdHex != bin2hex($rObj->data)) {
-					throw new \Exception("Invalid Flash complete ACK response");
+				try {
+					$rObj	= $this->flashRead();
+					if ($cmdHex != bin2hex($rObj->data)) {
+						throw new \Exception("Invalid Flash complete ACK response");
+					}
+				} catch (\Exception $e) {
+					//CRS328 returns 3 messages, AX2 seems not to
 				}
 			}
 			
