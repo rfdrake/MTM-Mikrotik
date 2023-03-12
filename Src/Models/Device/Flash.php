@@ -47,7 +47,7 @@ abstract class Flash extends Alpha
 	{
 		//may have to be adjusted for remote vs. local
 		if ($this->getModel() === "C52iG-5HaxD2HaxD") {
-			return 250;
+			return 500;
 		} elseif ($this->getModel() === "RBD52G-5HacD2HnD") {
 			return 2500;
 		}
@@ -182,14 +182,13 @@ abstract class Flash extends Alpha
 			if ($cmdHex != bin2hex($rObj->data)) {
 				throw new \Exception("Invalid Flash success ACK response");
 			}
-			$cmdHex				= $this->arrayToHex(array_merge(array("T", "E", "R", "M", 10), str_split("Installation successful", 1), array(10)));
-			$this->flashWrite($cmdHex, ($rObj->srcPos + 1), $rObj->dstPos);
 			
+			$cmdHex		= $this->arrayToHex(array("F", "I", "L", "E", 10));
+			$this->flashWrite($cmdHex, ($rObj->srcPos + 1), $rObj->dstPos);
 			$rObj		= $this->flashRead();
+			
 			$cmdHex		= $this->arrayToHex(array("W", "T", "R", "M"));
-			if ($cmdHex != bin2hex($rObj->data)) {
-				throw new \Exception("Invalid Flash completed ACK response");
-			}
+			$this->flashWrite($cmdHex, ($rObj->srcPos + 1), $rObj->dstPos);
 
 		} catch (\Exception $e) {
 			throw $e;
