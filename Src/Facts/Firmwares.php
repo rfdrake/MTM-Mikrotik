@@ -50,28 +50,13 @@ class Firmwares extends Base
 		$file			= null;
 		$fileNames		= $this->getBasePath()->getFileNames();
 		foreach ($fileNames as $fileName) {
-			if (preg_match("/^".$type."\-(.+)\.(npk|bin)$/", $fileName, $raw) === 1) {
-				
-				if ($type === "routeros") {
-					if (preg_match("/^(.+)-(.+)$/", $raw[1], $raw2) === 1) {
-						
-						if ($raw2[2] === $devObj->getArchitecture() && $raw2[1] > $curVer) {
-							$curVer		= $raw2[1];
-							$file		= $fileName;
-						}
-						
-					} else {
-						throw new \Exception("Not handled for filename: '".$fileName."'");
-					}
-					
-				} elseif ($type === "swos") {
-					throw new \Exception("Not handled for type: '".$type."'");
-				} else {
-					throw new \Exception("Not handled for type: '".$type."'");
+			if (preg_match("/^(.+)\-(.+)\-(.+)\.(npk)$/", $fileName, $raw) === 1) {
+				if ($raw[1] === $type && $devObj->getArchitecture() === $raw[3] && $raw[2] > $curVer) {
+					$curVer		= $raw[2];
+					$file		= $fileName;
 				}
 			}
 		}
-		
 		if ($curVer !== null) {
 			if ($curVer < $devObj->getMinimumVersion()) {
 				throw new \Exception("The newest available firmware for model: '".$devObj->getModel()."', is not new enough. Device requires: '".$devObj->getMinimumVersion()."'. Newest version we found was: '".$curVer."' for architecture: '".$devObj->getArchitecture()."'");
