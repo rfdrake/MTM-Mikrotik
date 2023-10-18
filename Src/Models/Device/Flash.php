@@ -47,9 +47,11 @@ abstract class Flash extends Alpha
 	{
 		//may have to be adjusted for remote vs. local
 		if ($this->getModel() === "C52iG-5HaxD2HaxD") {
-			return 500;
+			return 1500;
 		} elseif ($this->getModel() === "RBD52G-5HacD2HnD") {
 			return 2500;
+		} elseif ($this->getModel() === "RB4011iGS+") {
+			return 1500;
 		}
 		return 7500;
 	}
@@ -217,7 +219,7 @@ abstract class Flash extends Alpha
 			if ($rObj->srcPos === $srcPos && $rObj->dstPos === $dstPos) {
 				return $rObj;
 			} elseif ($timeFact->getMicroEpoch() > $tTime) {
-				throw new \Exception("Did not receive a frame fwith the specified src and dst position in time");
+				throw new \Exception("Did not receive a frame with the specified src and dst position in time");
 			}
 		}
 	}

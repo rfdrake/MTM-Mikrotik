@@ -46,21 +46,57 @@ class Firmwares extends Base
 		//TODO: add check if the fw file matches the CPU arch, the npk holds the data in the first few bytes
 		//also check the minimum version requirements
 		
-		$curVer			= 0;
+		$curVer			= array_map("intval", explode(".", "0.0.0"));
 		$file			= null;
 		$fileNames		= $this->getBasePath()->getFileNames();
 		foreach ($fileNames as $fileName) {
 			if (preg_match("/^(.+)\-(.+)\-(.+)\.(npk)$/", $fileName, $raw) === 1) {
-				if ($raw[1] === $type && $devObj->getArchitecture() === $raw[3] && $raw[2] > $curVer) {
-					$curVer		= $raw[2];
-					$file		= $fileName;
+				if ($raw[1] === $type && $devObj->getArchitecture() === $raw[3]) {
+					
+					$replace	= false;
+					$fileVer	= array_map("intval", explode(".", $raw[2]));
+					if (array_key_exists(1, $fileVer) === false) {
+						$fileVer[1]		= 0;
+					}
+					if (array_key_exists(2, $fileVer) === false) {
+						$fileVer[2]		= 0;
+					}
+					if ($curVer[0] < $fileVer[0]) {
+						$replace	= true;
+					} elseif ($curVer[0] === $fileVer[0] && $curVer[1] < $fileVer[1]) {
+						$replace	= true;
+					} elseif ($curVer[0] === $fileVer[0] && $curVer[1] === $fileVer[1] && $curVer[2] < $fileVer[2]) {
+						$replace	= true;
+					}
+					
+					if ($replace === true) {
+						$curVer		= $fileVer;
+						$file		= $fileName;
+					}
 				}
 			}
 		}
-		if ($curVer !== null) {
-			if ($curVer < $devObj->getMinimumVersion()) {
-				throw new \Exception("The newest available firmware for model: '".$devObj->getModel()."', is not new enough. Device requires: '".$devObj->getMinimumVersion()."'. Newest version we found was: '".$curVer."' for architecture: '".$devObj->getArchitecture()."'");
+		if ($curVer[1] !== 0) {
+			
+			$accept		= false;
+			$minVer		= array_map("intval", explode(".", $devObj->getMinimumVersion()));
+			if (array_key_exists(1, $minVer) === false) {
+				$minVer[1]		= 0;
 			}
+			if (array_key_exists(2, $minVer) === false) {
+				$minVer[2]		= 0;
+			}
+			if ($minVer[0] < $fileVer[0]) {
+				$accept		= true;
+			} elseif ($minVer[0] === $curVer[0] && $minVer[1] < $curVer[1]) {
+				$accept		= true;
+			} elseif ($minVer[0] === $curVer[0] && $minVer[1] === $curVer[1] && $minVer[2] <= $curVer[2]) {
+				$accept		= true;
+			}
+			if ($accept === false) {
+				throw new \Exception("The newest available firmware for model: '".$devObj->getModel()."', is not new enough. Device requires: '".$devObj->getMinimumVersion()."'. Newest version we found was: '".implode(".", $curVer)."' for architecture: '".$devObj->getArchitecture()."'");
+			}
+
 		} else {
 			throw new \Exception("Unable to find suitable firmware for model: '".$devObj->getModel()."'");
 		}
@@ -68,7 +104,7 @@ class Firmwares extends Base
 		if (array_key_exists($file, $this->_s) === false) {
 			$fileObj			= \MTM\FS\Factories::getFiles()->getFile($file, $this->getBasePath());
 			$rObj				= new \MTM\Mikrotik\Models\Firmware\Zulu();
-			$rObj->setArchitecture($devObj->getArchitecture())->setVersion($curVer)->setFile($fileObj);
+			$rObj->setArchitecture($devObj->getArchitecture())->setVersion(implode(".", $curVer))->setFile($fileObj);
 			$this->_s[$file]	= $rObj;
 		}
 		return $this->_s[$file];
